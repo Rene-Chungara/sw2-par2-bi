@@ -9,9 +9,14 @@ from services.kpis_service import get_kpis_globales
 app = FastAPI()
 
 # Permitir CORS para Angular
+origins = [
+    "https://sw2-par2-front.vercel.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,  # 👈 importante usar lista específica en producción
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
