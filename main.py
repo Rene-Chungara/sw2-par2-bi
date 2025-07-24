@@ -11,6 +11,7 @@ app = FastAPI()
 # Permitir CORS para Angular
 origins = [
     "https://sw2-par2-front.vercel.app",
+    "http://localhost:4200",
 ]
 
 app.add_middleware(
