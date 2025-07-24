@@ -4,6 +4,7 @@ from services.charts_service import productos_mas_vendidos_chart, margen_gananci
 from models.schemas import KPI, ChartResponse
 from fastapi.middleware.cors import CORSMiddleware
 from services.kpis_service import get_kpis_globales
+import os
 
 
 app = FastAPI()
@@ -37,3 +38,7 @@ def chart_margen():
 @app.get("/api/kpis/resumen")
 def kpi_resumen():
     return get_kpis_globales()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
