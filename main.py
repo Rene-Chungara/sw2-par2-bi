@@ -1,15 +1,13 @@
 from fastapi import FastAPI
-from services.kpis_service import get_ventas_mensuales
-from services.charts_service import productos_mas_vendidos_chart, margen_ganancia_chart
-from models.schemas import KPI, ChartResponse
 from fastapi.middleware.cors import CORSMiddleware
-from services.kpis_service import get_kpis_globales
+from services.kpis_service import get_ventas_mensuales, get_kpis_globales
+from services.charts_service import productos_mas_vendidos_chart, margen_ganancia_chart
+from models.schemas import ChartResponse
 import os
-
 
 app = FastAPI()
 
-# Permitir CORS para Angular
+# CORS: Permitir frontend desde Vercel y desarrollo local
 origins = [
     "https://sw2-par2-front.vercel.app",
     "http://localhost:4200",
@@ -17,28 +15,51 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # 👈 importante usar lista específica en producción
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# === Endpoints con manejo de errores ===
+
 @app.get("/api/kpis/ventas-mensuales")
 def kpi_ventas():
-    return get_ventas_mensuales()
+    try:
+        print("🔍 Ejecutando get_ventas_mensuales()")
+        return get_ventas_mensuales()
+    except Exception as e:
+        print("❌ Error en get_ventas_mensuales:", e)
+        return {"error": str(e)}
 
 @app.get("/api/charts/productos-mas-vendidos", response_model=ChartResponse)
 def chart_productos():
-    return productos_mas_vendidos_chart()
+    try:
+        print("🔍 Ejecutando productos_mas_vendidos_chart()")
+        return productos_mas_vendidos_chart()
+    except Exception as e:
+        print("❌ Error en productos_mas_vendidos_chart:", e)
+        return {"error": str(e)}
 
 @app.get("/api/charts/margen-ganancia", response_model=ChartResponse)
 def chart_margen():
-    return margen_ganancia_chart()
+    try:
+        print("🔍 Ejecutando margen_ganancia_chart()")
+        return margen_ganancia_chart()
+    except Exception as e:
+        print("❌ Error en margen_ganancia_chart:", e)
+        return {"error": str(e)}
 
 @app.get("/api/kpis/resumen")
 def kpi_resumen():
-    return get_kpis_globales()
+    try:
+        print("🔍 Ejecutando get_kpis_globales()")
+        return get_kpis_globales()
+    except Exception as e:
+        print("❌ Error en get_kpis_globales:", e)
+        return {"error": str(e)}
 
+# === Ejecutar servidor local o en Railway ===
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
